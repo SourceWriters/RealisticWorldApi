@@ -3,12 +3,12 @@ package com.syntaxphoenix.realisticapi.schematic;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.syntaxphoenix.realisticapi.data.DataProcessor;
-import com.syntaxphoenix.realisticapi.data.RealProperty;
 import com.syntaxphoenix.realisticapi.data.block.BlockProcessor;
 import com.syntaxphoenix.realisticapi.data.block.RealBlock;
 import com.syntaxphoenix.realisticapi.data.entity.EntityProcessor;
 import com.syntaxphoenix.realisticapi.data.entity.RealEntity;
+import com.syntaxphoenix.realisticapi.data.property.PropertyProcessor;
+import com.syntaxphoenix.realisticapi.data.property.RealProperty;
 import com.syntaxphoenix.syntaxapi.logging.SynLogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtList;
@@ -28,11 +28,23 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	protected final GridMap<RealBlock> blockGrid = new GridMap<>(GridType.GRID_3D);
 	protected final GridMap<RealEntity> entityGrid = new GridMap<>(GridType.GRID_2D);
 	protected final Properties properties = new Properties();
-	
+
+	private PropertyProcessor property;
 	private EntityProcessor entity;
 	private BlockProcessor block;
-	private DataProcessor data;
 	private SynLogger logger;
+	
+	public final Properties getProperties() {
+		return properties;
+	}
+	
+	public final GridMap<RealBlock> getBlockGrid() {
+		return blockGrid;
+	}
+	
+	public final GridMap<RealEntity> getEntityGrid() {
+		return entityGrid;
+	}
 	
 	public SynLogger getLogger() {
 		return logger;
@@ -43,12 +55,12 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		return this;
 	}
 	
-	public DataProcessor getDataProcessor() {
-		return data;
+	public PropertyProcessor getPropertyProcessor() {
+		return property;
 	}
 	
-	public Schematic setDataProcessor(DataProcessor data) {
-		this.data = data;
+	public Schematic setPropertyProcessor(PropertyProcessor property) {
+		this.property = property;
 		return this;
 	}
 	
@@ -70,8 +82,12 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fromNbt(NbtCompound nbt) {
+		blockGrid.clear();
+		entityGrid.clear();
+		properties.clearProperties();
 		NbtCompound types = nbt.getCompound("types");
 		
 		HashMap<Integer, RealBlock> blockIds = new HashMap<>();
@@ -125,6 +141,18 @@ public class Schematic implements NbtStorage<NbtCompound> {
 				}
 				entityGrid.set(x, Integer.parseInt(key2), entityIds.get(values.getInt(key2)));
 			}
+		}
+		
+		NbtList<NbtCompound> processed = (NbtList<NbtCompound>) nbt.getTagList("properties");
+		if(processed.isEmpty()) {
+			return;
+		}
+		for(NbtCompound process : processed) {
+			RealProperty<?> data = property.process(process);
+			if(data == null) {
+				continue;
+			}
+			properties.addProperty(data.getProperty());
 		}
 		
 	}

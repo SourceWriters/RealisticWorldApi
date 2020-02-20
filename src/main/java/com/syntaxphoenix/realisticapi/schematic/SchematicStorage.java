@@ -6,6 +6,4 @@ public class SchematicStorage {
 	
 	private final ArrayList<Schematic> schematics = new ArrayList<>();
 	
-	
-	
 }

@@ -1,6 +1,7 @@
 package com.syntaxphoenix.realisticapi;
 
 import com.syntaxphoenix.realisticapi.addon.RealisticAddon;
+import com.syntaxphoenix.realisticapi.schematic.SchematicStorage;
 import com.syntaxphoenix.realisticapi.version.MinecraftVersion;
 import com.syntaxphoenix.realisticapi.version.MinecraftVersionManager;
 import com.syntaxphoenix.syntaxapi.addon.AddonManager;
@@ -14,6 +15,7 @@ public abstract class RealisticApi {
 	protected final SynLogger logger;
 	protected final MinecraftVersion version;
 	protected final EventManager eventManager;
+	protected final SchematicStorage schematicStorage;
 	protected final AddonManager<RealisticAddon> addonManager;
 	protected final VersionManager<MinecraftVersion> versionManager;
 	
@@ -21,11 +23,12 @@ public abstract class RealisticApi {
 		this.logger = logger;
 		this.version = version;
 		this.eventManager = new EventManager(logger);
+		this.schematicStorage = new SchematicStorage();
 		this.addonManager = new DefaultAddonManager<>(RealisticAddon.class, logger);
 		this.versionManager = new MinecraftVersionManager();
 	}
 	
-	/*
+	/* 
 	 * 
 	 */
 	
@@ -48,5 +51,5 @@ public abstract class RealisticApi {
 	public final VersionManager<MinecraftVersion> getVersionManager() {
 		return versionManager;
 	}
-
+	
 }
