@@ -3,12 +3,19 @@ package com.syntaxphoenix.realisticapi.schematic;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.syntaxphoenix.realisticapi.data.DataProcessor;
+import com.syntaxphoenix.realisticapi.data.RealProperty;
 import com.syntaxphoenix.realisticapi.data.block.BlockProcessor;
 import com.syntaxphoenix.realisticapi.data.block.RealBlock;
 import com.syntaxphoenix.realisticapi.data.entity.EntityProcessor;
 import com.syntaxphoenix.realisticapi.data.entity.RealEntity;
+import com.syntaxphoenix.syntaxapi.logging.SynLogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
+import com.syntaxphoenix.syntaxapi.nbt.NbtList;
+import com.syntaxphoenix.syntaxapi.nbt.NbtType;
 import com.syntaxphoenix.syntaxapi.nbt.utils.NbtStorage;
+import com.syntaxphoenix.syntaxapi.utils.data.Properties;
+import com.syntaxphoenix.syntaxapi.utils.data.Property;
 import com.syntaxphoenix.syntaxapi.utils.java.Strings;
 import com.syntaxphoenix.syntaxapi.utils.position.grid.GridLayer;
 import com.syntaxphoenix.syntaxapi.utils.position.grid.GridMap;
@@ -18,12 +25,33 @@ import com.syntaxphoenix.syntaxapi.utils.position.grid.GridValue;
 
 public class Schematic implements NbtStorage<NbtCompound> {
 
-	private final GridMap<RealBlock> blockGrid = new GridMap<>(GridType.GRID_3D);
-	private final GridMap<RealEntity> entityGrid = new GridMap<>(GridType.GRID_2D);
-
+	protected final GridMap<RealBlock> blockGrid = new GridMap<>(GridType.GRID_3D);
+	protected final GridMap<RealEntity> entityGrid = new GridMap<>(GridType.GRID_2D);
+	protected final Properties properties = new Properties();
+	
 	private EntityProcessor entity;
 	private BlockProcessor block;
-
+	private DataProcessor data;
+	private SynLogger logger;
+	
+	public SynLogger getLogger() {
+		return logger;
+	}
+	
+	public Schematic setLogger(SynLogger logger) {
+		this.logger = logger;
+		return this;
+	}
+	
+	public DataProcessor getDataProcessor() {
+		return data;
+	}
+	
+	public Schematic setDataProcessor(DataProcessor data) {
+		this.data = data;
+		return this;
+	}
+	
 	public BlockProcessor getBlockProcessor() {
 		return block;
 	}
@@ -166,6 +194,11 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		typeIds.clear();
 		id = 0;
 		
+		NbtList<NbtCompound> properties = new NbtList<>(NbtType.COMPOUND);
+		for(Property<?> property : this.properties.getProperties()) {
+			properties.add(new RealProperty<>(property).asNbt());
+		}
+		
 		NbtCompound types = new NbtCompound();
 		types.set("block", blockTypes);
 		types.set("entity", entityTypes);
@@ -173,6 +206,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		compound.set("types", types);
 		compound.set("blocks", layers);
 		compound.set("entities", rows);
+		compound.set("properties", properties);
 		
 		return compound;
 	}
