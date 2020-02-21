@@ -2,12 +2,15 @@ package com.syntaxphoenix.realisticapi;
 
 import com.syntaxphoenix.realisticapi.addon.RealisticAddon;
 import com.syntaxphoenix.realisticapi.schematic.SchematicStorage;
+import com.syntaxphoenix.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.realisticapi.version.MinecraftVersion;
 import com.syntaxphoenix.realisticapi.version.MinecraftVersionManager;
 import com.syntaxphoenix.syntaxapi.addon.AddonManager;
 import com.syntaxphoenix.syntaxapi.addon.DefaultAddonManager;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
 import com.syntaxphoenix.syntaxapi.logging.SynLogger;
+import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
+import com.syntaxphoenix.syntaxapi.threading.SynThreadReporter;
 import com.syntaxphoenix.syntaxapi.version.VersionManager;
 
 public abstract class RealisticApi {
@@ -23,9 +26,22 @@ public abstract class RealisticApi {
 		this.logger = logger;
 		this.version = version;
 		this.eventManager = new EventManager(logger);
-		this.schematicStorage = new SchematicStorage();
+		this.schematicStorage = new SchematicStorage(this);
 		this.addonManager = new DefaultAddonManager<>(RealisticAddon.class, logger);
 		this.versionManager = new MinecraftVersionManager();
+	}
+	
+	/*
+	 * 
+	 */
+	
+	public final SynThreadReporter newThreadReporter() {
+		return new SynThreadReporter() {
+			@Override
+			public void catchFail(Throwable throwable, SynThreadPool pool, Thread thread, Runnable command) {
+				logger.log(new CatchedException("There were a problem while execusting a task on \"" + thread.getName() + "\"", throwable));
+			}
+		};
 	}
 	
 	/* 

@@ -28,60 +28,147 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	protected final GridMap<RealBlock> blockGrid = new GridMap<>(GridType.GRID_3D);
 	protected final GridMap<RealEntity> entityGrid = new GridMap<>(GridType.GRID_2D);
 	protected final Properties properties = new Properties();
-
+	
 	private PropertyProcessor property;
 	private EntityProcessor entity;
 	private BlockProcessor block;
 	private SynLogger logger;
 	
+	/**
+	 * Get the properties
+	 * 
+	 * @return saved properties
+	 */
 	public final Properties getProperties() {
 		return properties;
 	}
 	
+	/**
+	 * Get the schematic's name
+	 * 
+	 * @return empty string or in properties set name
+	 */
+	public final String getName() {
+		Property<String> name = properties.findProperty("name").parseString();
+		return name == null ? "" : name.getValue();
+	}
+	
+	/**
+	 * Set the schematic's name
+	 * 
+	 * @param name - new schematic name
+	 */
+	public final void setName(String name) {
+		
+	}
+
+	/**
+	 * Get the block GridMap
+	 * 
+	 * @return GridMap that contains all saved blocks
+	 */
 	public final GridMap<RealBlock> getBlockGrid() {
 		return blockGrid;
 	}
-	
+
+	/**
+	 * Get the entity GridMap
+	 * 
+	 * @return GridMap that contains all saved entities
+	 */
 	public final GridMap<RealEntity> getEntityGrid() {
 		return entityGrid;
 	}
-	
+
+	/**
+	 * Get the logger
+	 * 
+	 * @return current logger or null
+	 */
 	public SynLogger getLogger() {
 		return logger;
 	}
-	
+
+	/**
+	 * Sets the logger
+	 * 
+	 * @param logger - logger to set
+	 * 
+	 * @return this schematic
+	 */
 	public Schematic setLogger(SynLogger logger) {
 		this.logger = logger;
 		return this;
 	}
-	
+
+	/**
+	 * Get the property processor
+	 * 
+	 * @return current property processor or null
+	 */
 	public PropertyProcessor getPropertyProcessor() {
 		return property;
 	}
-	
+
+	/**
+	 * Sets the property processor
+	 * 
+	 * @param property - property processor to set
+	 * 
+	 * @return this schematic
+	 */
 	public Schematic setPropertyProcessor(PropertyProcessor property) {
 		this.property = property;
 		return this;
 	}
-	
+
+	/**
+	 * Get the block processor
+	 * 
+	 * @return current block processor or null
+	 */
 	public BlockProcessor getBlockProcessor() {
 		return block;
 	}
 
+	/**
+	 * Sets the block processor
+	 * 
+	 * @param block - block processor to set
+	 * 
+	 * @return this schematic
+	 */
 	public Schematic setBlockProcessor(BlockProcessor block) {
 		this.block = block;
 		return this;
 	}
 
+	/**
+	 * Get the entity processor
+	 * 
+	 * @return current entity processor or null
+	 */
 	public EntityProcessor getEntityProcessor() {
 		return entity;
 	}
 
+	/**
+	 * Sets the entity processor
+	 * 
+	 * @param entity - entity processor to set
+	 * 
+	 * @return this schematic
+	 */
 	public Schematic setEntityProcessor(EntityProcessor entity) {
 		this.entity = entity;
 		return this;
 	}
 
+	/**
+	 * Load from nbt
+	 * 
+	 * @param nbt - NbtCompound that should be loaded from
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void fromNbt(NbtCompound nbt) {
@@ -157,6 +244,11 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		
 	}
 
+	/**
+	 * Save to nbt
+	 * 
+	 * @return resulting NbtCompound
+	 */
 	@Override
 	public NbtCompound asNbt() {
 		NbtCompound compound = new NbtCompound();
