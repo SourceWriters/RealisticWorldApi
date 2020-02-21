@@ -25,7 +25,7 @@ public class PlainSchematic extends NbtSchematic {
 	public void load() {
 		
 		
-		if (file.getName().endsWith("rnbt")) {
+		if (file.getName().endsWith("snbt")) {
 			super.load();
 		} else {
 			YamlConfig config = new YamlConfig();
