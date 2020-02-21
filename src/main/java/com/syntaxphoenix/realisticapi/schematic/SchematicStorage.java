@@ -131,6 +131,7 @@ public class SchematicStorage extends RealisticApiHandler {
 				}
 				continue;
 			}
+			status.done();
 		});
 		return status;
 	}
@@ -166,6 +167,7 @@ public class SchematicStorage extends RealisticApiHandler {
 				}
 				status.skip();
 			}
+			status.done();
 		});
 		return status;
 	}
