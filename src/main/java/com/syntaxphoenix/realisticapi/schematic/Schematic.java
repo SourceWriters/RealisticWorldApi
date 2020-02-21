@@ -9,6 +9,7 @@ import com.syntaxphoenix.realisticapi.data.entity.EntityProcessor;
 import com.syntaxphoenix.realisticapi.data.entity.RealEntity;
 import com.syntaxphoenix.realisticapi.data.property.PropertyProcessor;
 import com.syntaxphoenix.realisticapi.data.property.RealProperty;
+import com.syntaxphoenix.realisticapi.data.property.RealisticProperty;
 import com.syntaxphoenix.syntaxapi.logging.SynLogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtList;
@@ -316,7 +317,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		
 		NbtList<NbtCompound> properties = new NbtList<>(NbtType.COMPOUND);
 		for(Property<?> property : this.properties.getProperties()) {
-			properties.add(new RealProperty<>(property).asNbt());
+			properties.add(new RealisticProperty<>(property).asNbt());
 		}
 		
 		NbtCompound types = new NbtCompound();

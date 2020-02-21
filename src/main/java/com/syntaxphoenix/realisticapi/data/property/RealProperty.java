@@ -1,14 +1,12 @@
 package com.syntaxphoenix.realisticapi.data.property;
 
 import com.syntaxphoenix.realisticapi.data.RealData;
-import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
-import com.syntaxphoenix.syntaxapi.nbt.tools.NbtJsonParser;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
-public class RealProperty<E> extends RealData {
+public abstract class RealProperty<E> extends RealData {
 
-	private final Property<E> property;
-	private final Class<E> type;
+	protected final Property<E> property;
+	protected final Class<E> type;
 	
 	public RealProperty(Class<E> type, Property<E> property) {
 		this.property = property;
@@ -59,22 +57,6 @@ public class RealProperty<E> extends RealData {
 	
 	public boolean instanceOf(Class<?> clazz) {
 		return type.isAssignableFrom(clazz);
-	}
-	
-	/*
-	 * 
-	 */
-	
-	@Override
-	public NbtCompound asNbt() {
-		NbtCompound property = new NbtCompound();
-		property.set("key", getKey());
-		property.set("value", NbtJsonParser.toNbt(getValue()));
-
-		NbtCompound compound = new NbtCompound();
-		compound.set("type", type.getName());
-		compound.set("property", property);
-		return compound;
 	}
 	
 }
