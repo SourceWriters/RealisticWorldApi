@@ -23,9 +23,8 @@ public class PlainSchematic extends NbtSchematic {
 	 */
 	@Override
 	public void load() {
-		
-		
-		if (file.getName().endsWith("snbt")) {
+		// Load all snbts (Syntax Named Binary Tag Schematic) files with NbtSchematic
+		if (file.getName().endsWith("snbts")) {
 			super.load();
 		} else {
 			YamlConfig config = new YamlConfig();
