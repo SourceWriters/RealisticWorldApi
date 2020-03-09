@@ -60,7 +60,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @param name - new schematic name
 	 */
 	public final void setName(String name) {
-		
+		properties.setProperty(Property.create("name", name));
 	}
 
 	/**
