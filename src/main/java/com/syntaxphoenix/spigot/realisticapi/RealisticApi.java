@@ -3,8 +3,8 @@ package com.syntaxphoenix.spigot.realisticapi;
 import com.syntaxphoenix.spigot.realisticapi.addon.RealisticAddon;
 import com.syntaxphoenix.spigot.realisticapi.schematic.SchematicStorage;
 import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
+import com.syntaxphoenix.spigot.realisticapi.utils.Patches;
 import com.syntaxphoenix.spigot.realisticapi.version.MinecraftVersion;
-import com.syntaxphoenix.spigot.realisticapi.version.MinecraftVersionManager;
 import com.syntaxphoenix.syntaxapi.addon.AddonManager;
 import com.syntaxphoenix.syntaxapi.addon.DefaultAddonManager;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
@@ -28,7 +28,10 @@ public abstract class RealisticApi {
 		this.eventManager = new EventManager(logger);
 		this.schematicStorage = new SchematicStorage(this);
 		this.addonManager = new DefaultAddonManager<>(RealisticAddon.class, logger);
-		this.versionManager = new MinecraftVersionManager();
+		this.versionManager = new VersionManager<>();
+		
+		Patches.apply(this);
+		
 	}
 	
 	/*
