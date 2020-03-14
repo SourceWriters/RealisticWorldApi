@@ -2,7 +2,7 @@ package com.syntaxphoenix.spigot.realisticapi.data.property;
 
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.tools.NbtJsonParser;
-import com.syntaxphoenix.syntaxapi.reflections.Reflector;
+import com.syntaxphoenix.syntaxapi.reflections.ClassCache;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
 public class RealisticPropertyProcessor extends PropertyProcessor {
@@ -13,7 +13,7 @@ public class RealisticPropertyProcessor extends PropertyProcessor {
 		if(!compound.hasKey("type") || !compound.hasKey("property")) {
 			return null;
 		}
-		Class type = Reflector.getClass(compound.getString("type"));
+		Class type = ClassCache.getClass(compound.getString("type"));
 		NbtCompound property = compound.getCompound("property");
 		if(!property.hasKey("key") || !property.hasKey("value")) {
 			return null;

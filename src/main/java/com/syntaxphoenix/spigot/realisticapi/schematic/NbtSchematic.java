@@ -3,6 +3,7 @@ package com.syntaxphoenix.spigot.realisticapi.schematic;
 import java.io.File;
 import java.io.IOException;
 
+import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtNamedTag;
 import com.syntaxphoenix.syntaxapi.nbt.NbtType;
@@ -23,16 +24,12 @@ public class NbtSchematic extends FiledSchematic {
 	/**
 	 * Load the schematic's data from the file
 	 */
-	public void load() {
+	public void load() throws RuntimeException {
 		NbtNamedTag tag = null;
 		try {
 			tag = NbtDeserializer.COMPRESSED.fromFile(file);
 		} catch (IOException e) {
-			if (getLogger() == null) {
-				e.printStackTrace();
-			} else {
-				getLogger().log(e);
-			}
+			throw new CatchedException(e);
 		}
 		if (tag == null) {
 			return;
@@ -45,7 +42,7 @@ public class NbtSchematic extends FiledSchematic {
 	/**
 	 * Save the schematic's data to the file
 	 */
-	public void save() {
+	public void save() throws RuntimeException {
 		NbtNamedTag tag = new NbtNamedTag("root", asNbt());
 		try {
 			NbtSerializer.COMPRESSED.toFile(tag, file);

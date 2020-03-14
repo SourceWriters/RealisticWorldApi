@@ -14,7 +14,7 @@ import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
 public class SchematicStorage extends RealisticApiHandler {
-	
+
 	/**
 	 * Constructs a SchematicStorage
 	 * 
@@ -23,10 +23,10 @@ public class SchematicStorage extends RealisticApiHandler {
 	public SchematicStorage(RealisticApi api) {
 		super(api);
 	}
-	
+
 	private final ArrayList<Schematic> schematics = new ArrayList<>();
 	private final SynThreadPool threadPool = new SynThreadPool(api.newThreadReporter(), 2, 8, "SchematicLoader");
-	
+
 	/**
 	 * Register a schematic
 	 * 
@@ -36,7 +36,7 @@ public class SchematicStorage extends RealisticApiHandler {
 	 */
 	public boolean register(Schematic schematic) {
 		Property<String> name = schematic.getProperties().findProperty("name").parseString();
-		if(name == null)
+		if (name == null)
 			return false;
 		return register(name.getValue(), schematic);
 	}
@@ -44,16 +44,16 @@ public class SchematicStorage extends RealisticApiHandler {
 	/**
 	 * Register a schematic
 	 * 
-	 * @param name - name that the schematic should have
+	 * @param name      - name that the schematic should have
 	 * @param schematic - Schematic that should be registered
 	 * 
 	 * @return if schematic was registered or not
 	 */
 	public boolean register(String name, Schematic schematic) {
 		name = name.replace(' ', '_').toUpperCase();
-		if(schematics.contains(schematic) || containsUpped(name))
+		if (schematics.contains(schematic) || containsUpped(name))
 			return false;
- 		schematic.setName(name);
+		schematic.setName(name);
 		return schematics.add(schematic);
 	}
 
@@ -90,7 +90,6 @@ public class SchematicStorage extends RealisticApiHandler {
 		return schematics.stream().filter(schematic -> schematic.getName().equals(name)).findFirst();
 	}
 
-
 	/**
 	 * Search for an Schematic
 	 * 
@@ -102,30 +101,33 @@ public class SchematicStorage extends RealisticApiHandler {
 		name = name.replace(' ', '_').toUpperCase();
 		return getByNameUpped(name);
 	}
-	
+
 	/**
 	 * Load all schematics
 	 */
 	@SuppressWarnings("unchecked")
 	public LoadingStatus load() {
-		if(schematics.isEmpty()) {
+		if (schematics.isEmpty()) {
 			return LoadingStatus.EMPTY;
 		}
 		List<Schematic> schematics = (List<Schematic>) this.schematics.clone();
 		LoadingStatus status = new LoadingStatus(schematics.size());
 		threadPool.submit(() -> {
 			EventManager events = api.getEventManager();
-			for(Schematic schematic : schematics) {
+			for (Schematic schematic : schematics) {
 				try {
 					SchematicEvent event = new SchematicLoadEvent(schematic);
 					events.call(event);
-					if(event.isCancelled()) {
+					if (event.isCancelled()) {
 						status.cancel();
 						continue;
 					}
-					((FiledSchematic) schematic).save();
-					status.success();
-				} catch(RuntimeException exception) {
+					if(schematic instanceof FiledSchematic) {
+						((FiledSchematic) schematic).load();
+						status.success();
+					} else
+						status.skip();
+				} catch (RuntimeException exception) {
 					api.getLogger().log(LogType.WARNING, exception);
 					status.failed();
 				}
@@ -135,31 +137,34 @@ public class SchematicStorage extends RealisticApiHandler {
 		});
 		return status;
 	}
-	
+
 	/**
 	 * Save all schematics
 	 */
 	@SuppressWarnings("unchecked")
 	public LoadingStatus save() {
-		if(schematics.isEmpty()) {
+		if (schematics.isEmpty()) {
 			return LoadingStatus.EMPTY;
 		}
 		List<Schematic> schematics = (List<Schematic>) this.schematics.clone();
 		LoadingStatus status = new LoadingStatus(schematics.size());
 		threadPool.submit(() -> {
 			EventManager events = api.getEventManager();
-			for(Schematic schematic : schematics) {
-				if(schematic instanceof FiledSchematic) {
+			for (Schematic schematic : schematics) {
+				if (schematic instanceof FiledSchematic) {
 					try {
 						SchematicEvent event = new SchematicSaveEvent(schematic);
 						events.call(event);
-						if(event.isCancelled()) {
+						if (event.isCancelled()) {
 							status.cancel();
 							continue;
 						}
-						((FiledSchematic) schematic).save();
-						status.success();
-					} catch(RuntimeException exception) {
+						if (schematic instanceof FiledSchematic) {
+							((FiledSchematic) schematic).save();
+							status.success();
+						} else
+							status.skip();
+					} catch (RuntimeException exception) {
 						api.getLogger().log(LogType.WARNING, exception);
 						status.failed();
 					}
@@ -171,5 +176,5 @@ public class SchematicStorage extends RealisticApiHandler {
 		});
 		return status;
 	}
-	
+
 }

@@ -3,6 +3,7 @@ package com.syntaxphoenix.spigot.realisticapi.schematic;
 import java.io.File;
 import java.io.IOException;
 
+import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.syntaxapi.config.yaml.YamlConfig;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
@@ -22,7 +23,7 @@ public class PlainSchematic extends NbtSchematic {
 	 * Load the schematic's data from the file
 	 */
 	@Override
-	public void load() {
+	public void load() throws RuntimeException {
 		// Load all snbts (Syntax Named Binary Tag Schematic) files with NbtSchematic
 		if (file.getName().endsWith("snbts")) {
 			super.load();
@@ -31,11 +32,7 @@ public class PlainSchematic extends NbtSchematic {
 			try {
 				config.load(file);
 			} catch (IOException e) {
-				if (getLogger() == null) {
-					e.printStackTrace();
-				} else {
-					getLogger().log(e);
-				}
+				throw new CatchedException(e);
 			}
 			
 			/*
@@ -49,7 +46,7 @@ public class PlainSchematic extends NbtSchematic {
 	}
 
 	@Override
-	public void save() {
+	public void save() throws RuntimeException {
 		file = new File(file.getPath(), file.getName().replace(file.getName().split("\\.")[1], ".rnbt"));
 		super.save();
 	}

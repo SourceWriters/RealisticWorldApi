@@ -10,8 +10,8 @@ public abstract class FiledSchematic extends Schematic {
 		this.file = file;
 	}
 	
-	public abstract void load();
+	public abstract void load() throws RuntimeException;
 	
-	public abstract void save();
-
+	public abstract void save() throws RuntimeException;
+	
 }

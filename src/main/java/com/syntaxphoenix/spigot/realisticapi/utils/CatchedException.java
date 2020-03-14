@@ -1,6 +1,6 @@
 package com.syntaxphoenix.spigot.realisticapi.utils;
 
-public class CatchedException extends Exception {
+public class CatchedException extends RuntimeException {
 
 	/**
      * Constructs an <code>CatchedException</code> with no
