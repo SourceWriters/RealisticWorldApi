@@ -7,16 +7,14 @@ import com.syntaxphoenix.spigot.realisticapi.data.block.BlockProcessor;
 import com.syntaxphoenix.spigot.realisticapi.data.block.ABlock;
 import com.syntaxphoenix.spigot.realisticapi.data.entity.EntityProcessor;
 import com.syntaxphoenix.spigot.realisticapi.data.entity.AEntity;
-import com.syntaxphoenix.spigot.realisticapi.data.property.PropertyProcessor;
+import com.syntaxphoenix.spigot.realisticapi.data.property.RealisticProperties;
+import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
 import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
-import com.syntaxphoenix.spigot.realisticapi.data.property.RealisticProperty;
+import com.syntaxphoenix.spigot.realisticapi.data.property.PropertiesProcessor;
 import com.syntaxphoenix.spigot.realisticapi.generation.IWriteable;
 import com.syntaxphoenix.syntaxapi.logging.SynLogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
-import com.syntaxphoenix.syntaxapi.nbt.NbtList;
-import com.syntaxphoenix.syntaxapi.nbt.NbtType;
 import com.syntaxphoenix.syntaxapi.nbt.utils.NbtStorage;
-import com.syntaxphoenix.syntaxapi.utils.data.Properties;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 import com.syntaxphoenix.syntaxapi.utils.java.Strings;
 import com.syntaxphoenix.syntaxapi.utils.position.grid.GridLayer;
@@ -29,19 +27,27 @@ public class Schematic implements NbtStorage<NbtCompound> {
 
 	protected final GridMap<ABlock> blockGrid = new GridMap<>(GridType.GRID_3D);
 	protected final GridMap<AEntity> entityGrid = new GridMap<>(GridType.GRID_3D);
-	protected final Properties properties = new Properties();
+	protected AProperties<?> properties;
 	
-	private PropertyProcessor property;
+	private PropertiesProcessor property;
 	private EntityProcessor entity;
 	private BlockProcessor block;
 	private SynLogger logger;
+	
+	public Schematic() {
+		this.properties = new RealisticProperties();
+	}
+	
+	public Schematic(AProperties<?> properties) {
+		this.properties = properties;
+	}
 	
 	/**
 	 * Get the properties
 	 * 
 	 * @return saved properties
 	 */
-	public final Properties getProperties() {
+	public final AProperties<?> getProperties() {
 		return properties;
 	}
 	
@@ -51,7 +57,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return empty string or in properties set name
 	 */
 	public final String getName() {
-		Property<String> name = properties.findProperty("name").parseString();
+		AProperty<String> name = properties.findProperty("name").parseString();
 		return name == null ? "" : name.getValue();
 	}
 	
@@ -108,7 +114,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * 
 	 * @return current property processor or null
 	 */
-	public PropertyProcessor getPropertyProcessor() {
+	public PropertiesProcessor getPropertyProcessor() {
 		return property;
 	}
 
@@ -119,7 +125,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * 
 	 * @return this schematic
 	 */
-	public Schematic setPropertyProcessor(PropertyProcessor property) {
+	public Schematic setPropertyProcessor(PropertiesProcessor property) {
 		this.property = property;
 		return this;
 	}
@@ -191,12 +197,10 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * 
 	 * @param nbt - NbtCompound that should be loaded from
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void fromNbt(NbtCompound nbt) {
 		blockGrid.clear();
 		entityGrid.clear();
-		properties.clearProperties();
 		NbtCompound types = nbt.getCompound("types");
 		
 		HashMap<Integer, ABlock> blockIds = new HashMap<>();
@@ -251,19 +255,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 				entityGrid.set(x, Integer.parseInt(key2), entityIds.get(values.getInt(key2)));
 			}
 		}
-		
-		NbtList<NbtCompound> processed = (NbtList<NbtCompound>) nbt.getTagList("properties");
-		if(processed.isEmpty()) {
-			return;
-		}
-		for(NbtCompound process : processed) {
-			AProperty<?> data = property.process(process);
-			if(data == null) {
-				continue;
-			}
-			properties.addProperty(data.getProperty());
-		}
-		
+		properties = property.process(nbt.getCompound("properties"));
 	}
 
 	/**
@@ -336,11 +328,6 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		typeIds.clear();
 		id = 0;
 		
-		NbtList<NbtCompound> properties = new NbtList<>(NbtType.COMPOUND);
-		for(Property<?> property : this.properties.getProperties()) {
-			properties.add(new RealisticProperty<>(property).asNbt());
-		}
-		
 		NbtCompound types = new NbtCompound();
 		types.set("block", blockTypes);
 		types.set("entity", entityTypes);
@@ -348,7 +335,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		compound.set("types", types);
 		compound.set("blocks", layers);
 		compound.set("entities", rows);
-		compound.set("properties", properties);
+		compound.set("properties", properties.asNbt());
 		
 		return compound;
 	}

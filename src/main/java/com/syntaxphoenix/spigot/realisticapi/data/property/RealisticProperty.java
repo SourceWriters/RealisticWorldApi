@@ -17,6 +17,15 @@ public class RealisticProperty<P> extends AProperty<P> {
 	/*
 	 * 
 	 */
+	
+	@Override
+	protected <A> RealisticProperty<A> init(Property<A> value) {
+		return new RealisticProperty<>(value);
+	}
+	
+	/*
+	 * 
+	 */
 
 	@Override
 	public NbtCompound asNbt() {

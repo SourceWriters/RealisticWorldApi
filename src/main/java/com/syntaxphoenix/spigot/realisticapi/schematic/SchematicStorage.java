@@ -6,12 +6,12 @@ import java.util.Optional;
 
 import com.syntaxphoenix.spigot.realisticapi.RealisticApi;
 import com.syntaxphoenix.spigot.realisticapi.RealisticApiHandler;
+import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
 import com.syntaxphoenix.spigot.realisticapi.event.schematic.*;
 import com.syntaxphoenix.spigot.realisticapi.utils.LoadingStatus;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
 import com.syntaxphoenix.syntaxapi.logging.LogType;
 import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
-import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
 public class SchematicStorage extends RealisticApiHandler {
 
@@ -35,7 +35,7 @@ public class SchematicStorage extends RealisticApiHandler {
 	 * @return if schematic was registered or not
 	 */
 	public boolean register(Schematic schematic) {
-		Property<String> name = schematic.getProperties().findProperty("name").parseString();
+		AProperty<String> name = schematic.getProperties().findProperty("name").parseString();
 		if (name == null)
 			return false;
 		return register(name.getValue(), schematic);
