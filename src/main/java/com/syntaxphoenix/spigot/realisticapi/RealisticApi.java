@@ -8,21 +8,21 @@ import com.syntaxphoenix.spigot.realisticapi.version.MinecraftVersion;
 import com.syntaxphoenix.syntaxapi.addon.AddonManager;
 import com.syntaxphoenix.syntaxapi.addon.DefaultAddonManager;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
-import com.syntaxphoenix.syntaxapi.logging.SynLogger;
+import com.syntaxphoenix.syntaxapi.logging.ILogger;
 import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
 import com.syntaxphoenix.syntaxapi.threading.SynThreadReporter;
 import com.syntaxphoenix.syntaxapi.version.VersionManager;
 
 public abstract class RealisticApi {
 	
-	protected final SynLogger logger;
+	protected final ILogger logger;
 	protected final MinecraftVersion version;
 	protected final EventManager eventManager;
 	protected final SchematicStorage schematicStorage;
 	protected final AddonManager<RealisticAddon> addonManager;
 	protected final VersionManager<MinecraftVersion> versionManager;
 	
-	public RealisticApi(SynLogger logger, MinecraftVersion version) {
+	public RealisticApi(ILogger logger, MinecraftVersion version) {
 		this.logger = logger;
 		this.version = version;
 		this.eventManager = new EventManager(logger);
@@ -51,7 +51,7 @@ public abstract class RealisticApi {
 	 * 
 	 */
 	
-	public final SynLogger getLogger() {
+	public final ILogger getLogger() {
 		return logger;
 	}
 	
@@ -61,6 +61,10 @@ public abstract class RealisticApi {
 	
 	public final EventManager getEventManager() {
 		return eventManager;
+	}
+	
+	public final SchematicStorage getSchematicStorage() {
+		return schematicStorage;
 	}
 	
 	public final AddonManager<RealisticAddon> getAddonManager() {

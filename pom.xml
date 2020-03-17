@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.github.SyntaxPhoenix</groupId>
 			<artifactId>syntax-api</artifactId>
-			<version>0aa0b89507</version>
+			<version>014b2b5bb6</version>
 		</dependency>
 
 		<!-- Spigot -->
