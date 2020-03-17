@@ -1,19 +1,10 @@
 package com.syntaxphoenix.spigot.realisticapi.data.property;
 
+import com.syntaxphoenix.spigot.realisticapi.data.RealisticProcessors;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtList;
 
 public class RealisticPropertiesProcessor extends PropertiesProcessor {
-
-	private final RealisticPropertyProcessor processor;
-
-	public RealisticPropertiesProcessor(RealisticPropertyProcessor processor) {
-		this.processor = processor;
-	}
-
-	public RealisticPropertyProcessor getProcessor() {
-		return processor;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -26,7 +17,7 @@ public class RealisticPropertiesProcessor extends PropertiesProcessor {
 			return properties;
 		NbtList<NbtCompound> list = (NbtList<NbtCompound>) root.getTagList("properties");
 		for (NbtCompound compound : list) {
-			RealisticProperty<?> property = processor.process(compound);
+			RealisticProperty<?> property = RealisticProcessors.PROPERTY.process(compound);
 			if (property != null)
 				properties.add(property);
 		}
