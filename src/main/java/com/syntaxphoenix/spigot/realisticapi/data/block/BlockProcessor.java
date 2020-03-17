@@ -9,12 +9,12 @@ import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 public abstract class BlockProcessor extends DataProcessor {
 	
 	@Override
-	public abstract RealBlock process(NbtCompound compound);
+	public abstract ABlock process(NbtCompound compound);
 	
-	public abstract RealBlock process(Material material);
+	public abstract ABlock process(Material material);
 	
-	public abstract RealBlock process(String blockData);
+	public abstract ABlock process(String blockData);
 	
-	public abstract RealBlock process(Block block);
+	public abstract ABlock process(Block block);
 	
 }

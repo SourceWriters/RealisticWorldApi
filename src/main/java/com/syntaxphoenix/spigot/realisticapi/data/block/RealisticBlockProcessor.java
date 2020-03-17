@@ -12,22 +12,22 @@ public class RealisticBlockProcessor extends BlockProcessor {
 	 */
 
 	@Override
-	public RealBlock process(NbtCompound compound) {
+	public ABlock process(NbtCompound compound) {
 		return null;
 	}
 
 	@Override
-	public RealBlock process(Material material) {
+	public ABlock process(Material material) {
 		return null;
 	}
 
 	@Override
-	public RealBlock process(String blockData) {
+	public ABlock process(String blockData) {
 		return null;
 	}
 
 	@Override
-	public RealBlock process(Block block) {
+	public ABlock process(Block block) {
 		return null;
 	}
 

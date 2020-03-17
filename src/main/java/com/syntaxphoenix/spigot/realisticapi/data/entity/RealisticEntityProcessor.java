@@ -11,12 +11,12 @@ public class RealisticEntityProcessor extends EntityProcessor {
 	 */
 
 	@Override
-	public RealEntity process(NbtCompound compound) {
+	public AEntity process(NbtCompound compound) {
 		return null;
 	}
 
 	@Override
-	public RealEntity process(Entity entity) {
+	public AEntity process(Entity entity) {
 		return null;
 	}
 

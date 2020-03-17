@@ -4,7 +4,7 @@ import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.tools.NbtJsonParser;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
-public class RealisticProperty<P> extends RealProperty<P> {
+public class RealisticProperty<P> extends AProperty<P> {
 	
 	public RealisticProperty(Class<P> type, Property<P> property) {
 		super(type, property);

@@ -4,6 +4,6 @@ import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 
 public abstract class DataProcessor {
 	
-	public abstract RealData process(NbtCompound compound);
+	public abstract AData process(NbtCompound compound);
 	
 }

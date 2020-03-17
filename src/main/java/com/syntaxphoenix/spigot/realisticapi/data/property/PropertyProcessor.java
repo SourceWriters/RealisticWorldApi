@@ -7,10 +7,10 @@ import com.syntaxphoenix.syntaxapi.utils.data.Property;
 public abstract class PropertyProcessor extends DataProcessor {
 	
 	@Override
-	public abstract RealProperty<?> process(NbtCompound compound);
+	public abstract AProperty<?> process(NbtCompound compound);
 	
-	public abstract <E> RealProperty<E> process(Class<E> type, Property<E> property);
+	public abstract <E> AProperty<E> process(Class<E> type, Property<E> property);
 	
-	public abstract <E> RealProperty<E> process(Property<E> property);
+	public abstract <E> AProperty<E> process(Property<E> property);
 
 }

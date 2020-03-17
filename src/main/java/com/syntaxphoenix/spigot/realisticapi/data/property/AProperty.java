@@ -1,20 +1,20 @@
 package com.syntaxphoenix.spigot.realisticapi.data.property;
 
-import com.syntaxphoenix.spigot.realisticapi.data.RealData;
+import com.syntaxphoenix.spigot.realisticapi.data.AData;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
 
-public abstract class RealProperty<E> extends RealData {
+public abstract class AProperty<E> extends AData {
 
 	protected final Property<E> property;
 	protected final Class<E> type;
 	
-	public RealProperty(Class<E> type, Property<E> property) {
+	public AProperty(Class<E> type, Property<E> property) {
 		this.property = property;
 		this.type = type;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public RealProperty(Property<E> property) {
+	public AProperty(Property<E> property) {
 		this((Class<E>) property.getValue().getClass(), property);
 	}
 	

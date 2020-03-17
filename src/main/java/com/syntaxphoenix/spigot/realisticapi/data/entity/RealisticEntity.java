@@ -2,9 +2,15 @@ package com.syntaxphoenix.spigot.realisticapi.data.entity;
 
 import org.bukkit.Location;
 
+import com.syntaxphoenix.spigot.realisticapi.data.property.RealisticProperties;
+import com.syntaxphoenix.spigot.realisticapi.generation.IDataWriter;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 
-public class RealisticEntity extends RealEntity {
+public class RealisticEntity extends AEntity {
+
+	public RealisticEntity() {
+		super(new RealisticProperties());
+	}
 	
 	/*
 	 * Coming soon
@@ -21,8 +27,11 @@ public class RealisticEntity extends RealEntity {
 	}
 
 	@Override
-	public int getY() {
-		return 0;
+	public boolean write(IDataWriter writer) {
+		if(!writer.isSupported(getDataType()))
+			return false;
+		
+		return true;
 	}
 
 }

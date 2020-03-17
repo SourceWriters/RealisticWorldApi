@@ -8,8 +8,8 @@ import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 public abstract class EntityProcessor extends DataProcessor {
 
 	@Override
-	public abstract RealEntity process(NbtCompound compound);
+	public abstract AEntity process(NbtCompound compound);
 	
-	public abstract RealEntity process(Entity entity);
+	public abstract AEntity process(Entity entity);
 
 }
