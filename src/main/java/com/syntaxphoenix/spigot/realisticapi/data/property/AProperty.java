@@ -54,10 +54,8 @@ public abstract class AProperty<E> extends AData {
 		return obj == null ? null : (AProperty<V>) this;
 	}
 
-	@SuppressWarnings("unchecked")
 	public AProperty<String> parseString() {
-		Property<String> stringified = property.parseString();
-		return stringified.equals(property) ? (AProperty<String>) this : init(stringified);
+		return init(property.parseString());
 	}
 
 	public boolean isInstance(Object object) {

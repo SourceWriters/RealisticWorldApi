@@ -3,6 +3,7 @@ package com.syntaxphoenix.spigot.realisticapi.schematic;
 import java.io.File;
 import java.io.IOException;
 
+import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
 import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtNamedTag;
@@ -19,6 +20,16 @@ public class NbtSchematic extends FiledSchematic {
 	 */
 	public NbtSchematic(File file) {
 		super(file);
+	}
+	
+	/**
+	 * Constructs a loadable nbt file schematic
+	 * 
+	 * @param file - schematic file
+	 * @param properties - schematic propertytype
+	 */
+	public NbtSchematic(AProperties<?> properties, File file) {
+		super(properties, file);
 	}
 
 	/**

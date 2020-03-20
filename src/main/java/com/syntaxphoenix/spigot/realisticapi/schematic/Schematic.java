@@ -12,7 +12,7 @@ import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
 import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
 import com.syntaxphoenix.spigot.realisticapi.data.property.PropertiesProcessor;
 import com.syntaxphoenix.spigot.realisticapi.generation.IWriteable;
-import com.syntaxphoenix.syntaxapi.logging.SynLogger;
+import com.syntaxphoenix.syntaxapi.logging.ILogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.utils.NbtStorage;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
@@ -32,7 +32,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	private PropertiesProcessor property;
 	private EntityProcessor entity;
 	private BlockProcessor block;
-	private SynLogger logger;
+	private ILogger logger;
 	
 	public Schematic() {
 		this.properties = new RealisticProperties();
@@ -93,7 +93,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * 
 	 * @return current logger or null
 	 */
-	public SynLogger getLogger() {
+	public ILogger getLogger() {
 		return logger;
 	}
 
@@ -104,7 +104,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * 
 	 * @return this schematic
 	 */
-	public Schematic setLogger(SynLogger logger) {
+	public Schematic setLogger(ILogger logger) {
 		this.logger = logger;
 		return this;
 	}
@@ -219,7 +219,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 			}
 		}
 		
-		NbtCompound layers = new NbtCompound();
+		NbtCompound layers = nbt.getCompound("blocks");
 		for (String key1 : layers.getKeys()) {
 			if (!Strings.isNumeric(key1)) {
 				continue;

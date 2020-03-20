@@ -45,7 +45,7 @@ public class RealisticBlock extends ABlock {
 
 	@Override
 	public void setBlock(Location location) {
-		location.getBlock().setBlockData(data);
+		location.getWorld().getBlockAt(location).setBlockData(this.data);
 	}
 
 	@Override

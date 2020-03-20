@@ -3,6 +3,7 @@ package com.syntaxphoenix.spigot.realisticapi.schematic;
 import java.io.File;
 import java.io.IOException;
 
+import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
 import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.syntaxapi.config.yaml.YamlConfig;
 import com.syntaxphoenix.syntaxapi.utils.data.Property;
@@ -17,6 +18,16 @@ public class PlainSchematic extends NbtSchematic {
 	 */
 	public PlainSchematic(File file) {
 		super(file);
+	}
+	
+	/**
+	 * Constructs a loadable nbt schematic that supports to load old RWG schematic format
+	 * 
+	 * @param file - schematic file
+	 * @param properties - schematic propertytype
+	 */
+	public PlainSchematic(AProperties<?> properties, File file) {
+		super(properties, file);
 	}
 
 	/**

@@ -105,12 +105,10 @@ public class SchematicStorage extends RealisticApiHandler {
 	/**
 	 * Load all schematics
 	 */
-	@SuppressWarnings("unchecked")
 	public LoadingStatus load() {
 		if (schematics.isEmpty()) {
 			return LoadingStatus.EMPTY;
 		}
-		List<Schematic> schematics = (List<Schematic>) this.schematics.clone();
 		LoadingStatus status = new LoadingStatus(schematics.size());
 		threadPool.submit(() -> {
 			EventManager events = api.getEventManager();
