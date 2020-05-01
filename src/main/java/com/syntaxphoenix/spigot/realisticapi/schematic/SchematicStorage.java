@@ -26,7 +26,7 @@ public class SchematicStorage extends RealisticApiHandler {
 
 	private final ArrayList<Schematic> schematics = new ArrayList<>();
 	private final SynThreadPool threadPool = new SynThreadPool(api.newThreadReporter(), 2, 8, "SchematicLoader");
-
+	
 	/**
 	 * Register a schematic
 	 * 
