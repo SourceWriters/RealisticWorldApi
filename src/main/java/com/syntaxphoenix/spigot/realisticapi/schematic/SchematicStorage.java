@@ -10,7 +10,7 @@ import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
 import com.syntaxphoenix.spigot.realisticapi.event.schematic.*;
 import com.syntaxphoenix.spigot.realisticapi.utils.LoadingStatus;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
-import com.syntaxphoenix.syntaxapi.logging.LogType;
+import com.syntaxphoenix.syntaxapi.logging.LogTypeId;
 import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
 
 public class SchematicStorage extends RealisticApiHandler {
@@ -126,7 +126,7 @@ public class SchematicStorage extends RealisticApiHandler {
 					} else
 						status.skip();
 				} catch (RuntimeException exception) {
-					api.getLogger().log(LogType.WARNING, exception);
+					api.getLogger().log(LogTypeId.WARNING, exception);
 					status.failed();
 				}
 				continue;
@@ -163,7 +163,7 @@ public class SchematicStorage extends RealisticApiHandler {
 						} else
 							status.skip();
 					} catch (RuntimeException exception) {
-						api.getLogger().log(LogType.WARNING, exception);
+						api.getLogger().log(LogTypeId.WARNING, exception);
 						status.failed();
 					}
 					continue;

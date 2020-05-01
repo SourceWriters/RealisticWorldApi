@@ -30,8 +30,8 @@
 
 		<dependency>
 			<groupId>com.github.SyntaxPhoenix</groupId>
-			<artifactId>syntax-api</artifactId>
-			<version>014b2b5bb6</version>
+			<artifactId>SyntaxApi</artifactId>
+			<version>8982beadff</version>
 		</dependency>
 
 		<!-- Spigot -->
@@ -41,6 +41,16 @@
 			<artifactId>spigot-api</artifactId>
 			<version>1.15.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
@@ -85,6 +95,16 @@
 						</filter>
 					</filters>
 					<createDependencyReducedPom>true</createDependencyReducedPom>
+					<relocations>
+						<relocation>
+							<pattern>org.yaml.snakeyaml</pattern>
+							<shadedPattern>com.syntaxphoenix.syntaxapi.shaded.snakeyaml</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>com.google.gson</pattern>
+							<shadedPattern>com.syntaxphoenix.syntaxapi.shaded.gson</shadedPattern>
+						</relocation>
+					</relocations>
 				</configuration>
 			</plugin>
 			<plugin>
