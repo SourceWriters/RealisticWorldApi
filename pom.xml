@@ -17,10 +17,10 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 
-		<!-- GitHub -->
+		<!-- SyntaxPhoenix -->
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
+			<id>SyntaxPhoenix</id>
+			<url>http://maven.syntaxphoenix.com/repository/public</url>
 		</repository>
 	</repositories>
 
@@ -29,9 +29,9 @@
 		<!-- Syntax Api -->
 
 		<dependency>
-			<groupId>com.github.SyntaxPhoenix</groupId>
-			<artifactId>SyntaxApi</artifactId>
-			<version>8982beadff</version>
+			<groupId>com.syntaxphoenix</groupId>
+			<artifactId>syntaxapi</artifactId>
+			<version>1.3.6-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Spigot -->

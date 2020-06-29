@@ -8,10 +8,10 @@ import com.syntaxphoenix.spigot.realisticapi.RealisticApi;
 import com.syntaxphoenix.spigot.realisticapi.RealisticApiHandler;
 import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
 import com.syntaxphoenix.spigot.realisticapi.event.schematic.*;
-import com.syntaxphoenix.spigot.realisticapi.utils.LoadingStatus;
 import com.syntaxphoenix.syntaxapi.event.EventManager;
 import com.syntaxphoenix.syntaxapi.logging.LogTypeId;
 import com.syntaxphoenix.syntaxapi.threading.SynThreadPool;
+import com.syntaxphoenix.syntaxapi.utils.general.Status;
 
 public class SchematicStorage extends RealisticApiHandler {
 
@@ -26,7 +26,24 @@ public class SchematicStorage extends RealisticApiHandler {
 
 	private final ArrayList<Schematic> schematics = new ArrayList<>();
 	private final SynThreadPool threadPool = new SynThreadPool(api.newThreadReporter(), 2, 8, "SchematicLoader");
-	
+
+	/**
+	 * Register multiple schematics
+	 * 
+	 * @param schematic - Schematics that should be registered
+	 * 
+	 * @return number of schematics that were registered
+	 */
+	public int register(Schematic[] schematics) {
+		if(schematics == null || schematics.length == 0)
+			return 0;
+		int count = 0;
+		for(Schematic schematic : schematics)
+			if(register(schematic))
+				count++;
+		return count;
+	}
+
 	/**
 	 * Register a schematic
 	 * 
@@ -105,11 +122,11 @@ public class SchematicStorage extends RealisticApiHandler {
 	/**
 	 * Load all schematics
 	 */
-	public LoadingStatus load() {
+	public Status load() {
 		if (schematics.isEmpty()) {
-			return LoadingStatus.EMPTY;
+			return Status.EMPTY;
 		}
-		LoadingStatus status = new LoadingStatus(schematics.size());
+		Status status = new Status(schematics.size());
 		threadPool.submit(() -> {
 			EventManager events = api.getEventManager();
 			for (Schematic schematic : schematics) {
@@ -120,7 +137,7 @@ public class SchematicStorage extends RealisticApiHandler {
 						status.cancel();
 						continue;
 					}
-					if(schematic instanceof FiledSchematic) {
+					if (schematic instanceof FiledSchematic) {
 						((FiledSchematic) schematic).load();
 						status.success();
 					} else
@@ -140,12 +157,12 @@ public class SchematicStorage extends RealisticApiHandler {
 	 * Save all schematics
 	 */
 	@SuppressWarnings("unchecked")
-	public LoadingStatus save() {
+	public Status save() {
 		if (schematics.isEmpty()) {
-			return LoadingStatus.EMPTY;
+			return Status.EMPTY;
 		}
 		List<Schematic> schematics = (List<Schematic>) this.schematics.clone();
-		LoadingStatus status = new LoadingStatus(schematics.size());
+		Status status = new Status(schematics.size());
 		threadPool.submit(() -> {
 			EventManager events = api.getEventManager();
 			for (Schematic schematic : schematics) {

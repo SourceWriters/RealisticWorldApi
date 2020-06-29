@@ -41,7 +41,11 @@ public class RealisticBlockProcessor extends BlockProcessor {
 
 	@Override
 	public RealisticBlock process(String blockData) {
-		return process(Bukkit.createBlockData(blockData));
+		try {
+			return process(Bukkit.createBlockData(blockData));
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
 	}
 
 	@Override

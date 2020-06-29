@@ -13,6 +13,8 @@ public abstract class EntityProcessor extends DataProcessor {
 	
 	public abstract AEntity process(EntityType entityType);
 	
+	public abstract AEntity process(String string);
+	
 	public abstract AEntity process(Entity entity);
 
 }

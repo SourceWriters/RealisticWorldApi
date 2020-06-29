@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
-import com.syntaxphoenix.spigot.realisticapi.utils.CatchedException;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.NbtNamedTag;
 import com.syntaxphoenix.syntaxapi.nbt.NbtType;
@@ -37,17 +36,18 @@ public class NbtSchematic extends FiledSchematic {
 	 */
 	public void load() throws RuntimeException {
 		NbtNamedTag tag = null;
+		
 		try {
 			tag = NbtDeserializer.COMPRESSED.fromFile(file);
 		} catch (IOException e) {
-			throw new CatchedException(e);
+			invalid("Couldn't load nbt tag from file '" + file.getName() + "'!", e);
 		}
-		if (tag == null) {
-			return;
-		}
-		if (tag.getTag().getType() == NbtType.COMPOUND) {
+		
+		if (tag == null)
+			invalid("Wasn't able load nbt from file '" + file.getName() + "'!");
+		
+		if (tag.getTag().getType() == NbtType.COMPOUND)
 			fromNbt((NbtCompound) tag.getTag());
-		}
 	}
 
 	/**
@@ -58,11 +58,7 @@ public class NbtSchematic extends FiledSchematic {
 		try {
 			NbtSerializer.COMPRESSED.toFile(tag, file);
 		} catch (IOException e) {
-			if (getLogger() == null) {
-				e.printStackTrace();
-			} else {
-				getLogger().log(e);
-			}
+			invalid("Couldn't save schematic to '" + file.getName() + "'!", e);
 		}
 	}
 

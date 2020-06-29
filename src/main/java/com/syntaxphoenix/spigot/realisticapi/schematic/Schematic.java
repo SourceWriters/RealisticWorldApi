@@ -12,6 +12,7 @@ import com.syntaxphoenix.spigot.realisticapi.data.property.AProperties;
 import com.syntaxphoenix.spigot.realisticapi.data.property.AProperty;
 import com.syntaxphoenix.spigot.realisticapi.data.property.PropertiesProcessor;
 import com.syntaxphoenix.spigot.realisticapi.generation.IWriteable;
+import com.syntaxphoenix.spigot.realisticapi.utils.exception.InvalidSchematicException;
 import com.syntaxphoenix.syntaxapi.logging.ILogger;
 import com.syntaxphoenix.syntaxapi.nbt.NbtCompound;
 import com.syntaxphoenix.syntaxapi.nbt.utils.NbtStorage;
@@ -24,24 +25,24 @@ import com.syntaxphoenix.syntaxapi.utils.position.grid.GridType;
 import com.syntaxphoenix.syntaxapi.utils.position.grid.GridValue;
 
 public class Schematic implements NbtStorage<NbtCompound> {
-
+	
 	protected final GridMap<ABlock> blockGrid = new GridMap<>(GridType.GRID_3D);
 	protected final GridMap<AEntity> entityGrid = new GridMap<>(GridType.GRID_3D);
 	protected AProperties<?> properties;
-	
-	private PropertiesProcessor property;
-	private EntityProcessor entity;
-	private BlockProcessor block;
-	private ILogger logger;
-	
+
+	protected PropertiesProcessor propertiesProcessor;
+	protected EntityProcessor entityProcessor;
+	protected BlockProcessor blockProcessor;
+	protected ILogger logger;
+
 	public Schematic() {
 		this.properties = new RealisticProperties();
 	}
-	
+
 	public Schematic(AProperties<?> properties) {
 		this.properties = properties;
 	}
-	
+
 	/**
 	 * Get the properties
 	 * 
@@ -50,7 +51,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	public final AProperties<?> getProperties() {
 		return properties;
 	}
-	
+
 	/**
 	 * Get the schematic's name
 	 * 
@@ -60,7 +61,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		AProperty<String> name = properties.findProperty("name").parseString();
 		return name == null ? "" : name.getValue();
 	}
-	
+
 	/**
 	 * Set the schematic's name
 	 * 
@@ -115,7 +116,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return current property processor or null
 	 */
 	public PropertiesProcessor getPropertyProcessor() {
-		return property;
+		return propertiesProcessor;
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return this schematic
 	 */
 	public Schematic setPropertyProcessor(PropertiesProcessor property) {
-		this.property = property;
+		this.propertiesProcessor = property;
 		return this;
 	}
 
@@ -136,7 +137,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return current block processor or null
 	 */
 	public BlockProcessor getBlockProcessor() {
-		return block;
+		return blockProcessor;
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return this schematic
 	 */
 	public Schematic setBlockProcessor(BlockProcessor block) {
-		this.block = block;
+		this.blockProcessor = block;
 		return this;
 	}
 
@@ -157,7 +158,7 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return current entity processor or null
 	 */
 	public EntityProcessor getEntityProcessor() {
-		return entity;
+		return entityProcessor;
 	}
 
 	/**
@@ -168,29 +169,17 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	 * @return this schematic
 	 */
 	public Schematic setEntityProcessor(EntityProcessor entity) {
-		this.entity = entity;
+		this.entityProcessor = entity;
 		return this;
 	}
-	
-	/*
-	 * 
-	 * 
-	 * 
-	 */
-	
+
 	public Schematic spawn(IWriteable data) {
 		return this;
 	}
-	
+
 	public Schematic paste(IWriteable data) {
 		return this;
 	}
-	
-	/*
-	 * 
-	 * 
-	 * 
-	 */
 
 	/**
 	 * Load from nbt
@@ -202,23 +191,23 @@ public class Schematic implements NbtStorage<NbtCompound> {
 		blockGrid.clear();
 		entityGrid.clear();
 		NbtCompound types = nbt.getCompound("types");
-		
+
 		HashMap<Integer, ABlock> blockIds = new HashMap<>();
 		NbtCompound blocks = types.getCompound("block");
 		for (String key : blocks.getKeys()) {
 			if (Strings.isNumeric(key)) {
-				blockIds.put(Integer.parseInt(key), block.process(blocks.getCompound(key)));
+				blockIds.put(Integer.parseInt(key), blockProcessor.process(blocks.getCompound(key)));
 			}
 		}
-		
+
 		HashMap<Integer, AEntity> entityIds = new HashMap<>();
 		NbtCompound entities = types.getCompound("entity");
 		for (String key : entities.getKeys()) {
 			if (Strings.isNumeric(key)) {
-				entityIds.put(Integer.parseInt(key), entity.process(entities.getCompound(key)));
+				entityIds.put(Integer.parseInt(key), entityProcessor.process(entities.getCompound(key)));
 			}
 		}
-		
+
 		NbtCompound layers = nbt.getCompound("blocks");
 		for (String key1 : layers.getKeys()) {
 			if (!Strings.isNumeric(key1)) {
@@ -240,22 +229,29 @@ public class Schematic implements NbtStorage<NbtCompound> {
 				}
 			}
 		}
-		
-		NbtCompound rows = nbt.getCompound("entities");
-		for (String key1 : rows.getKeys()) {
+
+		layers = nbt.getCompound("entities");
+		for (String key1 : layers.getKeys()) {
 			if (!Strings.isNumeric(key1)) {
 				continue;
 			}
-			int x = Integer.parseInt(key1);
-			NbtCompound values = rows.getCompound(key1);
-			for (String key2 : values.getKeys()) {
-				if (!Strings.isNumeric(key1)) {
+			int y = Integer.parseInt(key1);
+			NbtCompound rows = layers.getCompound(key1);
+			for (String key2 : rows.getKeys()) {
+				if (!Strings.isNumeric(key2)) {
 					continue;
 				}
-				entityGrid.set(x, Integer.parseInt(key2), entityIds.get(values.getInt(key2)));
+				int x = Integer.parseInt(key2);
+				NbtCompound values = rows.getCompound(key2);
+				for (String key3 : values.getKeys()) {
+					if (!Strings.isNumeric(key2)) {
+						continue;
+					}
+					entityGrid.set(y, x, Integer.parseInt(key3), entityIds.get(values.getInt(key3)));
+				}
 			}
 		}
-		properties = property.process(nbt.getCompound("properties"));
+		properties = propertiesProcessor.process(nbt.getCompound("properties"));
 	}
 
 	/**
@@ -266,15 +262,15 @@ public class Schematic implements NbtStorage<NbtCompound> {
 	@Override
 	public NbtCompound asNbt() {
 		NbtCompound compound = new NbtCompound();
-		
+
 		compound.set("height", blockGrid.getHeight());
 		compound.set("width", blockGrid.getWidth());
 		compound.set("depth", blockGrid.getDepth());
-		
+
 		HashMap<NbtCompound, Integer> typeIds = new HashMap<>();
 		int id = 0;
 
-		NbtCompound layers = new NbtCompound();
+		NbtCompound blocks = new NbtCompound();
 		for (GridLayer<ABlock> layer : blockGrid.getLayers()) {
 			NbtCompound rows = new NbtCompound();
 			for (GridRow<ABlock> row : layer.getRows()) {
@@ -292,19 +288,20 @@ public class Schematic implements NbtStorage<NbtCompound> {
 				}
 				rows.set("" + row.getX(), values);
 			}
-			layers.set("" + layer.getY(), rows);
+			blocks.set("" + layer.getY(), rows);
 		}
-		
+
 		NbtCompound blockTypes = new NbtCompound();
 		for (Entry<NbtCompound, Integer> entry : typeIds.entrySet()) {
 			blockTypes.set("" + entry.getValue(), entry.getKey());
 		}
 		typeIds.clear();
 		id = 0;
-		
-		NbtCompound rows = new NbtCompound();
-		if (entityGrid.getHeight() != 0) {
-			for (GridRow<AEntity> row : entityGrid.getLayers()[0].getRows()) {
+
+		NbtCompound entities = new NbtCompound();
+		for (GridLayer<AEntity> layer : entityGrid.getLayers()) {
+			NbtCompound rows = new NbtCompound();
+			for (GridRow<AEntity> row : layer.getRows()) {
 				NbtCompound values = new NbtCompound();
 				for (GridValue<AEntity> value : row.getValues()) {
 					NbtCompound data = value.getValue().asNbt();
@@ -319,25 +316,95 @@ public class Schematic implements NbtStorage<NbtCompound> {
 				}
 				rows.set("" + row.getX(), values);
 			}
+			entities.set("" + layer.getY(), rows);
 		}
-		
+
 		NbtCompound entityTypes = new NbtCompound();
 		for (Entry<NbtCompound, Integer> entry : typeIds.entrySet()) {
-			blockTypes.set("" + entry.getValue(), entry.getKey());
+			entityTypes.set("" + entry.getValue(), entry.getKey());
 		}
 		typeIds.clear();
 		id = 0;
-		
+
 		NbtCompound types = new NbtCompound();
 		types.set("block", blockTypes);
 		types.set("entity", entityTypes);
-		
+
 		compound.set("types", types);
-		compound.set("blocks", layers);
-		compound.set("entities", rows);
+		compound.set("blocks", blocks);
+		compound.set("entities", entities);
 		compound.set("properties", properties.asNbt());
-		
+
 		return compound;
+	}
+
+	/**
+	 * 
+	 * Schematic Exception Utility
+	 * 
+	 * @Desc Used to easily throw / log exceptions
+	 * 
+	 * @param throwable to log / throw as cause
+	 */
+	protected void invalid(Throwable throwable) throws InvalidSchematicException {
+		if(logger == null)
+			throw new InvalidSchematicException(throwable);
+		logger.log(throwable);
+	}
+	
+	/**
+	 * 
+	 * Schematic Exception Utility
+	 * 
+	 * @Desc Used to easily throw / log exceptions
+	 * 
+	 * @param message to display
+	 * @param throwable to log / throw as cause
+	 */
+	protected void invalid(String message, Throwable throwable) throws InvalidSchematicException {
+		if(logger == null)
+			throw new InvalidSchematicException(message, throwable);
+		logger.log(throwable);
+	}
+	
+	/**
+	 * 
+	 * Schematic Exception Utility
+	 * 
+	 * @Desc Used to easily throw / log exceptions
+	 * 
+	 * @param message to display
+	 * @param throwable to log / throw as cause
+	 */
+	protected void invalid(String message) throws InvalidSchematicException {
+		throw new InvalidSchematicException(message);
+	}
+
+	/**
+	 * 
+	 * Schematic Builder Utility
+	 * 
+	 * @Desc Used to easily create / load schematics
+	 * 
+	 */
+	public static final class Builder extends SchematicBuilder {
+
+		public Builder() {
+			super(null, null, null);
+		}
+
+		public Builder(ILogger logger) {
+			super(logger, null, null, null);
+		}
+
+		public Builder(PropertiesProcessor property, EntityProcessor entity, BlockProcessor block) {
+			super(property, entity, block);
+		}
+
+		public Builder(ILogger logger, PropertiesProcessor property, EntityProcessor entity, BlockProcessor block) {
+			super(logger, property, entity, block);
+		}
+
 	}
 
 }

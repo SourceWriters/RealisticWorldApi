@@ -1,4 +1,4 @@
-package com.syntaxphoenix.spigot.realisticapi.utils;
+package com.syntaxphoenix.spigot.realisticapi.utils.exception;
 
 public class CatchedException extends RuntimeException {
 
